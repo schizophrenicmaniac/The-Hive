@@ -152,16 +152,14 @@ async function handleMobileSync(req, res) {
       return res.status(404).json({ error: "Device not linked to any user" });
     }
 
-    const results = [];
-
-    for (const app of apps) {
-      const { appName, durationMs } = app;
-      const durationMinutes = durationMs / 60000;
-      const category = await resolveCategory(appName, "mobile");
-
-      await Activity.addCategoryTime(userId, date, category, durationMinutes);
-      results.push({ appName, durationMinutes, category });
-    }
+    const results = await Promise.all(
+      apps.map(async ({ appName, durationMs }) => {
+        const durationMinutes = durationMs / 60000;
+        const category = await resolveCategory(appName, "mobile");
+        await Activity.addCategoryTime(userId, date, category, durationMinutes);
+        return { appName, durationMinutes, category };
+      })
+    );
 
     return res.status(200).json({ message: "Mobile sync processed", results });
   } catch (err) {
