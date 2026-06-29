@@ -55,6 +55,7 @@ const AppEmbedding = {
       `SELECT app_or_site, category,
               1 - (embedding <=> $1::vector) AS similarity
        FROM app_embeddings
+       WHERE source != 'label'
        ORDER BY embedding <=> $1::vector
        LIMIT 1`,
       [vecStr]
