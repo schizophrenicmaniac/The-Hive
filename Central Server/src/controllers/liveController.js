@@ -183,7 +183,7 @@ async function buildPersonalizedSnapshot(userId) {
  * Broadcast updated stats to all connected authenticated clients
  * Each client gets their own personalized ranking
  */
-async function broadcastUpdate() {
+async function _broadcastUpdate() {
   if (!wss) return;
 
   const global = buildGlobalStats();
@@ -210,6 +210,15 @@ async function broadcastUpdate() {
       }
     }
   }
+}
+
+let _broadcastTimer = null;
+function broadcastUpdate() {
+  if (_broadcastTimer) return;
+  _broadcastTimer = setTimeout(async () => {
+    _broadcastTimer = null;
+    await _broadcastUpdate();
+  }, 1500);
 }
 
 /**
