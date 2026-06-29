@@ -19,6 +19,11 @@ const User = {
     return res.rows[0] || null;
   },
 
+  async findByIds(ids) {
+    const res = await db.query(`SELECT * FROM users WHERE user_id = ANY($1)`, [ids]);
+    return res.rows;
+  },
+
   async findByEmail(email) {
     const res = await db.query(`SELECT * FROM users WHERE email = $1`, [email]);
     return res.rows[0] || null;

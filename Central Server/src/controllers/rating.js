@@ -125,8 +125,11 @@ async function runEndOfDay() {
   // Step 1 & 2: Compute scores and Bayesian update
   const userScores = [];
 
+  const userRows = await User.findByIds(activeUserIds);
+  const userMap = new Map(userRows.map((u) => [u.user_id, u]));
+
   for (const userId of activeUserIds) {
-    const user = await User.findById(userId);
+    const user = userMap.get(userId);
     if (!user) continue;
 
     const { weightedScore, streakMet, personaRole } = await computeUserDailyScore(userId, date, T_MIN);
