@@ -129,6 +129,12 @@ async function buildLiveRanking(userId) {
   const today = new Date().toISOString().split("T")[0];
   const userTotals = await Activity.getDailyTotals(userId, today);
 
+  const sessionCategoryCounts = {};
+  for (const [, session] of Session.getAll()) {
+    const cat = getCategory(session.site);
+    sessionCategoryCounts[cat] = (sessionCategoryCounts[cat] || 0) + 1;
+  }
+
   const rankings = {};
 
   for (const [category, minutes] of Object.entries(userTotals)) {
@@ -136,26 +142,18 @@ async function buildLiveRanking(userId) {
     const nc = allScores.length;
     if (nc === 0) continue;
 
-    // Count how many the user is ahead of
     const countBelow = allScores.filter(
       (r) => parseFloat(r.total_minutes) <= minutes
     ).length;
     const percentile = countBelow / nc;
     const rank = nc - countBelow + 1;
 
-    // Count currently active in this category
-    let currentlyActive = 0;
-    for (const [, session] of Session.getAll()) {
-      const cat = getCategory(session.site);
-      if (cat === category) currentlyActive++;
-    }
-
     rankings[category] = {
       yourMinutes: Math.round(minutes * 10) / 10,
       rank,
       totalUsers: nc,
       percentile: Math.round(percentile * 10000) / 100,
-      currentlyActive,
+      currentlyActive: sessionCategoryCounts[category] || 0,
     };
   }
 
