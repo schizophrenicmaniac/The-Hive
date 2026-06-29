@@ -166,16 +166,16 @@ async function runEndOfDay() {
   }
 
   // Step 5: Compute and push EOD summaries via WebSocket
-  for (const u of userScores) {
+  for (let idx = 0; idx < userScores.length; idx++) {
+    const u = userScores[idx];
     try {
       const summary = await computeEODSummary(u.userId, date, u.personaRole);
       if (summary) {
-        // Add rating info to the summary
         summary.rating = {
           mu: Math.round(u.newMu * 100) / 100,
           sigma: Math.round(u.newSigma * 100) / 100,
           displayRating: Math.round(u.rating * 100) / 100,
-          tier: getTier((userScores.indexOf(u) + 1) / totalUsers),
+          tier: getTier((idx + 1) / totalUsers),
           streak: u.streakMet ? u.currentStreak + 1 : 0,
         };
         pushEODSummary(u.userId, summary);
