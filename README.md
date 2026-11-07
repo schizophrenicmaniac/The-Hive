@@ -392,12 +392,3 @@ This project uses the **ISC License** as specified in `package.json`. A `LICENSE
 
 ---
 
-## Contact & Support
-
-- **Repository**: [github.com/divyansh-1009/The-Hive](https://github.com/divyansh-1009/The-Hive)
-- **Issues**: Open a GitHub Issue for bug reports or feature requests
-- **Live Server**: [https://the-hive-uqio.onrender.com](https://the-hive-uqio.onrender.com)
-
----
-
-<p align="center">Built with ❤️ by the The Hive team</p>
